@@ -1,4 +1,4 @@
-import React from "react";
+import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import { removeItem, updateQuantity } from "./CartSlice";
 import "./CartItem.css";
@@ -10,14 +10,8 @@ const CartItem = ({ onContinueShopping }) => {
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
     let total = 0;
-    let itemCost = 0;
-    let itemQuantity = 0;
     cart.forEach((item) => {
-      itemCost = item.cost;
-      itemQuantity = item.quantity;
-
-      parseFloat(itemCost.substring(1));
-      total = itemCost * itemQuantity;
+      total = parseFloat(item.cost.substring(1)) * item.quantity;
     });
 
     return total;
@@ -32,21 +26,19 @@ const CartItem = ({ onContinueShopping }) => {
   };
 
   const handleDecrement = (item) => {
+    if (item.quantity <= 0) return;
+
     dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 }));
   };
 
   const handleRemove = (item) => {
-    dispatch(removeItem(item));
+    // dispatch the item identifier (name) so the reducer can remove by name
+    dispatch(removeItem(item.name));
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
-    const itemCost = item.cost;
-    const itemQuantity = item.quantity;
-
-    parseFloat(itemCost.substring(1));
-
-    return itemCost * itemQuantity;
+    return parseFloat(item.cost.substring(1)) * item.quantity;
   };
 
   return (
@@ -114,6 +106,10 @@ const CartItem = ({ onContinueShopping }) => {
       </div>
     </div>
   );
+};
+
+CartItem.propTypes = {
+  onContinueShopping: PropTypes.func.isRequired,
 };
 
 export default CartItem;

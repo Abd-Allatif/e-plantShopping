@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { useState } from "react";
 import "./ProductList.css";
 import CartItem from "./CartItem";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "./CartSlice";
 
 function ProductList({ onHomeClick }) {
   const [showCart, setShowCart] = useState(false);
   const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
   const [addedToCart, setAddedToCart] = useState({});
-  const dispatch =useDispatch();
+  const CartItems = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
+
+  const calculateTotalQuantity = () => {
+    return CartItems
+      ? CartItems.reduce((total, item) => total + item.quantity, 0)
+      : 0;
+  };
 
   const plantsArray = [
     {
@@ -298,8 +306,8 @@ function ProductList({ onHomeClick }) {
     dispatch(addItem(product));
 
     setAddedToCart((prevState) => ({
-        ...prevState,
-        [product.name]: true,
+      ...prevState,
+      [product.name]: true,
     }));
   };
 
@@ -330,7 +338,7 @@ function ProductList({ onHomeClick }) {
           <div>
             {" "}
             <a href="#" onClick={(e) => handleCartClick(e)} style={styleA}>
-              <h1 className="cart">
+              <h1 className="cart" style={{ position: "relative" }}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 256 256"
@@ -345,12 +353,27 @@ function ProductList({ onHomeClick }) {
                     d="M42.3,72H221.7l-26.4,92.4A15.9,15.9,0,0,1,179.9,176H84.1a15.9,15.9,0,0,1-15.4-11.6L32.5,37.8A8,8,0,0,0,24.8,32H8"
                     fill="none"
                     stroke="#faf9f9"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     id="mainIconPathAttribute"
                   ></path>
                 </svg>
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "6px",
+                    right: "6px",
+                    background: "red",
+                    color: "white",
+                    borderRadius: "50%",
+                    padding: "4px 8px",
+                    fontSize: "14px",
+                    fontWeight: "700",
+                  }}
+                >
+                  {calculateTotalQuantity()}
+                </span>
               </h1>
             </a>
           </div>
@@ -400,5 +423,8 @@ function ProductList({ onHomeClick }) {
     </div>
   );
 }
+ProductList.PropTypes = {
+  onHomeClick: PropTypes.func,
+};
 
 export default ProductList;
