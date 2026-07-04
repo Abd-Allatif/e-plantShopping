@@ -379,7 +379,7 @@ function ProductList({ onHomeClick }) {
                         {plant.description}
                       </div>{" "}
                       {/* Display plant description */}
-                      <div className="product-cost">${plant.cost}</div>{" "}
+                      <div className="product-cost">{plant.cost}</div>{" "}
                       {/* Display plant cost */}
                       <button
                         className="product-button"
